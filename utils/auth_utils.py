@@ -1,31 +1,36 @@
-import hashlib
-from datetime import datetime
-import pandas as pd
+# utils/auth_utils.py
+
 import sqlite3
-import streamlit as st
-from utils.db_utils import log_usuario  # Ajustar o caminho de importação
-from utils.models import User_Cliente
 
-def login():
-    with st.container():
-        col1, col2, col3 = st.columns([0.5, 9, 0.5])
-        with col2:
-            st.subheader("Login")
-            with st.form(key="form_login", clear_on_submit=True):
-                email = st.text_input("Usuário", placeholder="Digite seu Email")
-                password = st.text_input("Senha", type="password", placeholder="Digite sua senha")
+# Função para verificar login de usuário
+def login_user(username, password):
+    conn = sqlite3.connect('DB/loteria.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM usuarios WHERE username=? AND password=?", (username, password))
+    user = c.fetchone()
+    conn.close()
+    return user
 
-                if st.form_submit_button("Entrar"):
-                    try:
-                        user_cliente = User_Cliente("", "", email, password,"")
-                        User_Cliente_logado = log_usuario(user_cliente)
-                        if User_Cliente_logado:
-                            st.success("Login realizado com sucesso!")
-                            # Redirecionar para uma página de dashboard ou outra ação
-                            st.write("Você está logado!")
-                            return User_Cliente_logado  # Retorna os detalhes do usuário logado
-                        else:
-                            st.error("Usuário ou senha incorretos.")
-                    except Exception as e:
-                        st.error(f"Ocorreu um erro ao tentar fazer login: {str(e)}")
-            return None  # Retorna None se o login falhar
+# Função para registrar um novo usuário
+def register_user(username, password):
+    conn = sqlite3.connect('DB/loteria.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO usuarios (username, password) VALUES (?, ?)", (username, password))
+    conn.commit()
+    conn.close()
+
+# Função para verificar se um usuário já existe pelo username
+def check_existing_username(username):
+    conn = sqlite3.connect('DB/loteria.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM usuarios WHERE username=?", (username,))
+    user = c.fetchone()
+    conn.close()
+    return user
+
+# Função para fazer logout do usuário (limpar a sessão)
+def logout_user():
+    # Implemente conforme necessário
+    pass
+
+# Outras funções de autenticação conforme necessário

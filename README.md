@@ -1,21 +1,11 @@
-# :gestao_empresarial_app
+# :Simulador de jogos
 
-Pasta do Projeto: gestao_empresarial_app/
-
-app.py: Arquivo principal onde o código do Streamlit será escrito.
-   db/: Pasta para arquivos relacionados ao banco de dados SQLite.
-      database.db: Arquivo SQLite que armazena todos os dados.
-      createdb.ipynb: Aquivo python para criar as tabelas com os campos no database.db
-   utils/: Pasta para funções utilitárias e lógica de negócios.
-      db_utils.py: Funções para conexão ao banco de dados, consultas SQL, etc.
-      auth_utils.py: Funções para autenticação e gerenciamento de usuários.
-   pages/: Pasta para separar diferentes páginas do aplicativo.
-      dashboard.py: Código relacionado ao dashboard principal.
-      usuarios.py: Página para gestão de usuários.
-      clientes.py: Página para gestão de clientes.
-      vendas.py: Página para gestão de vendas.
-      estoque.py: Página para gestão de estoque.
-      funconarios.py: Página para gestão de funcionários. 
+Estrutura de Pastas e Arquivos
+Estrutura de Pastas:
+app.py: Arquivo principal que conterá o código do Streamlit.
+   DB/: Pasta para armazenar o arquivo de banco de dados (database.py) com as tabelas Usuarios, Jogos e Backlog.
+   utils/: Pasta para arquivos utilitários (db_utils.py e auth_utils.py).
+   pages/: Pasta para os diferentes componentes de páginas do aplicativo (dashboard.py, cadastro_jogos.py, listview_jogos.py).
 
 ### How to run it on your own machine
 
