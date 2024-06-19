@@ -1,36 +1,17 @@
-# utils/auth_utils.py
+import hashlib
+from utils.db_utils import register_user, authenticate_user
+import os
 
-import sqlite3
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-# Função para verificar login de usuário
 def login_user(username, password):
-    conn = sqlite3.connect('DB/loteria.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM usuarios WHERE username=? AND password=?", (username, password))
-    user = c.fetchone()
-    conn.close()
-    return user
+    hashed_password = hash_password(password)
+    user = authenticate_user(username, hashed_password)
+    if user:
+        return True
+    return False
 
-# Função para registrar um novo usuário
-def register_user(username, password):
-    conn = sqlite3.connect('DB/loteria.db')
-    c = conn.cursor()
-    c.execute("INSERT INTO usuarios (username, password) VALUES (?, ?)", (username, password))
-    conn.commit()
-    conn.close()
-
-# Função para verificar se um usuário já existe pelo username
-def check_existing_username(username):
-    conn = sqlite3.connect('DB/loteria.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM usuarios WHERE username=?", (username,))
-    user = c.fetchone()
-    conn.close()
-    return user
-
-# Função para fazer logout do usuário (limpar a sessão)
-def logout_user():
-    # Implemente conforme necessário
-    pass
-
-# Outras funções de autenticação conforme necessário
+def register(username, password):
+    hashed_password = hash_password(password)
+    register_user(username, hashed_password)
