@@ -1,6 +1,7 @@
+# app.py - Arquivo principal
 import re
 import streamlit as st
-from streamlit_option_menu import option_menu  # Importando o módulo de menu (se necessário)
+from streamlit_option_menu import option_menu  # Importando o módulo de menu
 from utils import db_utils, auth_utils
 from pages import dashboard  # Importando o módulo do dashboard
 
@@ -8,7 +9,13 @@ from pages import dashboard  # Importando o módulo do dashboard
 st.set_page_config(page_title="Dks Soluções", page_icon="📊", layout="wide")
 
 # Estilos CSS para ajustar a aparência da página
-st.markdown(""" <style> [data-testid="stSidebar"][aria-expanded="true"] { exibição: nenhuma; } </style> """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"][aria-expanded="true"] {
+            display: none;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
 # Função principal que controla o fluxo da aplicação
 def main():
@@ -38,13 +45,15 @@ def main():
         
         # Redirecionamento com base na opção selecionada
         if selected == "Dashboard":
-            dashboard.render_dashboard(st.session_state.username)
+            dashboard.render_dashboard(st.session_state.username, st.session_state.user_id)
 
         elif selected == "Logout":
             st.session_state.username = None
             st.session_state.logged_in = False
             st.experimental_rerun()  # Reinicia o aplicativo após logout
         return
+    else:
+        st.error("Você não está logado. Por favor, faça o login para acessar o dashboard.")
 
     # Tela de login e registro
     with st.container():
@@ -81,6 +90,7 @@ def login():
                 elif result:
                     st.session_state.username = username
                     st.session_state.logged_in = True
+                    st.session_state.user_id = result  # Set user_id based on actual user_id retrieval
                     st.success(f'Login realizado com sucesso como {username}!')
                     return username  # Retorna o username se o login for bem-sucedido
                 else:

@@ -2,22 +2,41 @@
 
 Estrutura de Pastas e Arquivos
 Estrutura de Pastas:
-app.py: Arquivo principal que conterá o código do Streamlit para login e cadastro de novos usuários.
-   DB/: Pasta para armazenar o arquivo de banco de dados (database.py) com as tabelas Usuarios, Backlog e onde deve ficar os dados que o usuário inputa por meio do upload.
-   utils/: Pasta para arquivos utilitários (db_utils.py e auth_utils.py).
-      db_utils.py: funções que manipulam o banco de dados com açoes de inclusão, edição, visualização e exclusão de dados.
-      auth_utils.py: funções que lidam com autenticação e autorização.
-   pages/: Pasta para os diferentes componentes de páginas do aplicativo (dashboard.py, listview.py).
-      dashboard.py: 
-         Fluxo de Caixa Operacional: Mede a quantidade de dinheiro gerado pelas operações normais da empresa.
-         Taxa de Crescimento de Vendas: Indica a velocidade com que as vendas da empresa estão aumentando.
-         Lucro Bruto e Margem de Lucro Bruto: Mostra a rentabilidade das vendas após subtrair o custo dos bens vendidos.
-         Lucro Líquido e Margem de Lucro Líquido: Reflete o lucro total após todas as despesas.
-         Fluxo de Caixa: Monitora o dinheiro que entra e sai da empresa.
-         Giro de Contas a Pagar: Avalia a eficiência com que a empresa paga suas obrigações.
-         Custo dos Bens Vendidos (COGS): Ajuda a entender os custos diretos associados à produção dos bens ou serviços vendidos pela empresa.
-         Custo de Aquisição de Cliente (CAC): Calcula o custo total associado à aquisição de um novo cliente.
-      listview.py: tabela editavel com os dados das transações cadastradas pelo usuário.
+app.py                 # Arquivo principal que contém o código do Streamlit para login e cadastro de novos usuários.
+DB/                    # Pasta para armazenar o arquivo de banco de dados (database.py) e os dados do usuário.
+   database.py         # Arquivo que cria e manipula as tabelas do banco de dados SQLite.
+   database.db         # Arquivo do banco de dados SQLite (criado automaticamente pelo database.py).
+utils/                 # Pasta para arquivos utilitários.
+   auth_utils.py       # Funções que lidam com autenticação e autorização de usuários.
+   db_utils.py         # Funções que manipulam o banco de dados, incluindo inserção, edição, visualização e exclusão de dados.
+pages/                 # Pasta para os diferentes componentes de páginas do aplicativo.
+   dashboard.py        # Página principal do dashboard com gráficos e métricas financeiras.
+Extratos/              # Pasta para armazenar os arquivos de extratos bancários carregados pelo usuário.
+   (arquivos CSV)      # Arquivos CSV carregados pelo usuário contendo os dados das transações bancárias.
+
+Explicações detalhadas:
+Arquivo app.py:
+
+Este é o arquivo principal que contém o código do Streamlit para a aplicação.
+Ele incluirá funcionalidades de login, cadastro de novos usuários e navegação entre diferentes páginas do aplicativo.
+Pasta DB/:
+
+database.py: Arquivo que contém o código para criação e manipulação das tabelas do banco de dados SQLite (database.db).
+database.db: Arquivo do banco de dados SQLite onde serão armazenados os dados dos usuários e suas transações financeiras.
+Pasta utils/:
+
+auth_utils.py: Arquivo com funções relacionadas à autenticação e autorização de usuários.
+db_utils.py: Arquivo com funções utilitárias para manipulação do banco de dados, incluindo inserção, edição, visualização e exclusão de dados.
+Pasta pages/:
+
+dashboard.py: Página principal do dashboard que apresenta gráficos e métricas financeiras importantes para o usuário, como Fluxo de Caixa Operacional, Lucro Líquido, etc.
+Pasta Extratos/:
+
+Pasta destinada a armazenar os arquivos CSV carregados pelo usuário contendo os dados dos extratos bancários.
+Os arquivos CSV carregados serão processados e as informações relevantes serão inseridas no banco de dados (database.db) por meio do db_utils.py.
+Considerações:
+Certifique-se de configurar corretamente as dependências (requirements.txt) para o ambiente virtual do seu projeto.
+Gerencie o fluxo de dados entre as páginas (app.py, dashboard.py) e os utilitários (db_utils.py, auth_utils.py) para garantir uma aplicação fluida e eficiente.
 
 ### How to run it on your own machine
 
