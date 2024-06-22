@@ -54,11 +54,27 @@ def authenticate_user(username, password):
 def add_data_to_extrato_table(df_upload, user_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-       
+    
     # Inserir os dados do arquivo CSV na tabela Extrato
     for _, row in df_upload.iterrows():
-        cursor.execute("INSERT INTO Extrato (ID_User, Data_da_Transacao, Transacao, Tipo_Transacao, Identificacao, Valor, Entrada, Saida, Mes, Saldo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                       (user_id, row['Data da Transação'], row['Transacao'], row['Tipo de Transação'], row['Identificacao'], row['Valor (R$)'], row['Entrada'], row['Saída'], row['Mês'], row['Saldo']))
+        cursor.execute(
+            """
+            INSERT INTO Extrato (ID_User, Data_da_Transacao, Transacao, Tipo_Transacao, Identificacao, Valor, Entrada, Saida, Mes, Saldo)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                user_id,
+                row['Data_da_Transacao'],
+                row['Transacao'],
+                row['Tipo_Transacao'],
+                row['Identificacao'],
+                row['Valor (R$)'],
+                row['Entrada'],
+                row['Saida'],
+                row['Mes'],
+                row['Saldo']
+            )
+        )
     
     conn.commit()
     conn.close()

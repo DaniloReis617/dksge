@@ -51,7 +51,7 @@ def render_dashboard(username, user_id):
             # Processamento dos dados conforme instruções fornecidas
             df_upload['Tipo Transação'] = df_upload['Tipo Transação'].str.upper()
             df_upload['Entrada'] = df_upload.apply(lambda x: x['Valor'] if x['Tipo Transação'] == 'CRÉDITO' else 0, axis=1)
-            df_upload['Saída'] = df_upload.apply(lambda x: x['Valor'] if x['Tipo Transação'] == 'DÉBITO' else 0, axis=1)
+            df_upload['Saida'] = df_upload.apply(lambda x: x['Valor'] if x['Tipo Transação'] == 'DÉBITO' else 0, axis=1)
 
             # Mapeamento de número do mês para nome em português
             meses = {
@@ -61,18 +61,28 @@ def render_dashboard(username, user_id):
             }
 
             # Extrair o mês da coluna 'Data' e mapear para o nome em português
-            df_upload['Mês'] = pd.to_datetime(df_upload['Data'], format='%d/%m/%Y').dt.month.map(meses)
+            df_upload['Mes'] = pd.to_datetime(df_upload['Data'], format='%d/%m/%Y').dt.month.map(meses)
 
             # Calcular saldo com base nos dados do upload
-            df_upload['Saldo'] = df_upload['Entrada'] - df_upload['Saída']
+            df_upload['Saldo'] = df_upload['Entrada'] - df_upload['Saida']
 
             # Renomear colunas conforme dados fornecidos
-            df_upload.rename(columns={'Data':'Data da Transação','Transação':'Transacao','Identificação':'Identificacao','Valor': 'Valor (R$)', 'Tipo Transação': 'Tipo de Transação'}, inplace=True)
+            df_upload.rename(columns={'Data': 'Data_da_Transacao', 'Transação': 'Transacao', 'Identificação': 'Identificacao', 'Valor': 'Valor (R$)', 'Tipo Transação': 'Tipo_Transacao'}, inplace=True)
 
-            add_data_to_extrato_table(df_upload, user_id)  # Pass user_id to add_data_to_extrato_table
+            # Adicionar user_id à DataFrame antes de inserir no banco de dados
+            df_upload['ID_User'] = user_id
 
-            # Call the get_extrato_data function to retrieve the data from the Extrato table
+            # Adicionar dados à tabela Extrato
+            add_data_to_extrato_table(df_upload, user_id)
+
+            # Buscar dados da tabela Extrato
             df_extrato = get_extrato_data(user_id)
+
+            # Verificar se as colunas necessárias estão presentes no DataFrame
+            required_columns = ['Mes', 'Tipo_Transacao', 'Entrada', 'Saida', 'Saldo']
+            if not all(col in df_extrato.columns for col in required_columns):
+                st.error("Os dados recuperados do banco de dados não contêm todas as colunas necessárias.")
+                return
 
             # Delete the uploaded CSV file
             if os.path.exists(file_path):
@@ -93,35 +103,32 @@ def render_dashboard(username, user_id):
 
             # Gráficos
             st.header("Gráficos")
-            
-            # Gráficos
-            st.header("Gráficos")
 
             # Estilo Seaborn
             sns.set_theme(style="whitegrid", font_scale=1.2, palette="pastel")
 
             # Gráfico de histograma para Entrada e Saída por mês
-            plt.figure(figsize=(10, 6))
-            sns.histplot(data=df_extrato, x='Mes', hue='Tipo de Transação', multiple='stack', edgecolor='white', alpha=0.7)
-            plt.xlabel('Mês')
-            plt.ylabel('Valor (R$)')
-            plt.title('Entrada e Saída por Mês (R$)')
+            fig, ax = plt.subplots(figsize=(10, 6))
+            sns.histplot(data=df_extrato, x='Mes', hue='Tipo_Transacao', multiple='stack', edgecolor='white', alpha=0.7, ax=ax)
+            ax.set_xlabel('Mês')
+            ax.set_ylabel('Valor (R$)')
+            ax.set_title('Entrada e Saída por Mês (R$)')
             plt.xticks(rotation=90)
-            plt.legend(title='Tipo de Transação', loc='upper right', bbox_to_anchor=(1.05, 1))
-            st.pyplot()
+            ax.legend(title='Tipo de Transação', loc='upper right', bbox_to_anchor=(1.05, 1))
+            st.pyplot(fig)
 
             # Gráfico de linha para Saldo acumulado por mês
-            plt.figure(figsize=(10, 6))
-            sns.lineplot(data=df_extrato, x='Mês', y=df_extrato['Saldo'].cumsum(), marker='o', linestyle='-', color='#3498db', label='Saldo acumulado')
-            plt.xlabel('Mês')
-            plt.ylabel('Valor (R$)')
-            plt.title('Saldo Acumulado por Mês (R$)')
+            fig, ax = plt.subplots(figsize=(10, 6))
+            sns.lineplot(data=df_extrato, x='Mes', y=df_extrato['Saldo'].cumsum(), marker='o', linestyle='-', color='#3498db', label='Saldo acumulado', ax=ax)
+            ax.set_xlabel('Mês')
+            ax.set_ylabel('Valor (R$)')
+            ax.set_title('Saldo Acumulado por Mês (R$)')
             plt.xticks(rotation=90)
-            plt.legend(loc='upper right', bbox_to_anchor=(1.05, 1))
-            st.pyplot()
+            ax.legend(loc='upper right', bbox_to_anchor=(1.05, 1))
+            st.pyplot(fig)
 
             with st.container():
-                col1, col2, col3 = st.columns([0.5,9,0.5])
+                col1, col2, col3 = st.columns([0.5, 9, 0.5])
                 with col2:
                     # Tabela Editável
                     st.header("Demonstração do Resultado do Exercício (DRE)")
