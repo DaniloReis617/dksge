@@ -91,3 +91,70 @@ def get_extrato_data(user_id):
     # Converter os dados em um DataFrame
     df = pd.DataFrame(rows, columns=['ID_Transacao', 'ID_User', 'Data_da_Transacao', 'Transacao', 'Tipo_Transacao', 'Identificacao', 'Valor', 'Entrada', 'Saida', 'Mes', 'Saldo'])
     return df
+
+# Função para adicionar uma nova transação
+def add_new_transaction(user_id, data_da_transacao, transacao, tipo_transacao, identificacao, valor, entrada, saida, mes, saldo):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Extrato (ID_User, Data_da_Transacao, Transacao, Tipo_Transacao, Identificacao, Valor, Entrada, Saida, Mes, Saldo)
+        VALUES (?,?,?,?,?,?,?,?,?,?)
+        """,
+        (
+            user_id,
+            data_da_transacao,
+            transacao,
+            tipo_transacao,
+            identificacao,
+            valor,
+            entrada,
+            saida,
+            mes,
+            saldo
+        )
+    )
+    conn.commit()
+    conn.close()
+
+# Função para editar uma transação
+def edit_transaction(id_transacao, data_da_transacao, transacao, tipo_transacao, identificacao, valor, entrada, saida, mes, saldo):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        UPDATE Extrato SET
+            Data_da_Transacao =?,
+            Transacao =?,
+            Tipo_Transacao =?,
+            Identificacao =?,
+            Valor =?,
+            Entrada =?,
+            Saida =?,
+            Mes =?,
+            Saldo =?
+        WHERE ID_Transacao =?
+        """,
+        (
+            data_da_transacao,
+            transacao,
+            tipo_transacao,
+            identificacao,
+            valor,
+            entrada,
+            saida,
+            mes,
+            saldo,
+            id_transacao
+        )
+    )
+    conn.commit()
+    conn.close()
+
+# Função para deletar uma transação
+def delete_transaction(id_transacao):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Extrato WHERE ID_Transacao =?", (id_transacao,))
+    conn.commit()
+    conn.close()
