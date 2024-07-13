@@ -46,8 +46,3 @@ Gerencie o fluxo de dados entre as páginas (app.py, dashboard.py) e os utilitá
    $ pip install -r requirements.txt
    ```
 
-2. Run the app
-
-   ```
-   $ streamlit run app.py
-   ```
